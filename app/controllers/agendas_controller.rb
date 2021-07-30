@@ -1,5 +1,5 @@
 class AgendasController < ApplicationController
-  # before_action :set_agenda, only: %i[show edit update destroy]
+   before_action :set_agenda, only: %i[show edit update destroy]
 
   def index
     @agendas = Agenda.all
@@ -20,17 +20,15 @@ class AgendasController < ApplicationController
       render :new
     end
   end
-  
+
   def destroy
-    if current_user.id==@agenda.user_id
-       @agenda.destroy
-       @agenda.team.assigns.each do |assign|
-         ContactMailer.contact_mail(assign.user.email,@agenda).deliver
-       end
-       #ContactMailer.contact_mail(@agenda).deliver
-       redirect_to dashboard_url, notice: "agenda deleted "
+    @agenda = Agenda. find(params[:id])
+    if @agenda. user_id == current_user. id || @agenda. team. owner_id == current_user. id
+      @agenda. destroy
+      redirect_to dashboard_path, notice: "#{@agenda. Title }deleted"
+      ContactMailer. agenda_destroy_mailer(@agenda. team. members. pluck(:email), @agenda). deliver
     else
-      redirect_to dashboard_url, notice: "you can't delete other owner's agenda"
+      redirect_to dashboard_path, notice: "Cannot delete"
     end
   end
 
