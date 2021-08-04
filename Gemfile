@@ -11,14 +11,14 @@ gem 'rails', '5.2.5'
 gem 'pg', '>= 0.18', '< 2.0'
 gem 'puma', '~> 3.11'
 
-# Frontend
+
 gem 'coderay'
 gem 'jquery-rails'
 gem 'redcarpet', '~> 3.5.1'
 gem 'sass-rails', '~> 5.0'
 gem 'webpacker', '~> 3.5'
 
-# Backend
+
 gem 'carrierwave'
 gem 'friendly_id', '~> 5.1.0'
 gem 'jbuilder', '~> 2.5'
@@ -62,6 +62,7 @@ group :development do
   gem 'listen', '~> 3.0.5'
   gem 'rack-mini-profiler', require: false
   gem 'web-console', '>= 3.3.0'
+  gem 'letter_opener_web'
 end
 
 group :test do

@@ -15,7 +15,8 @@ class TeamsController < ApplicationController
     @team = Team.new
   end
 
-  def edit; end
+  def edit;
+  end
 
   def create
     @team = Team.new(team_params)
@@ -28,6 +29,14 @@ class TeamsController < ApplicationController
       render :new
     end
   end
+  def owner
+      @team = Team.friendly.find(params[:team_id])
+      new_owner = Assign.find(params[:id])
+      @team.owner = new_owner.user
+      @team.update(team_params)
+      OwnerMailer.owner_mail(new_owner.user.email, @team.name).deliver
+      redirect_to team_url(params[:team_id])
+    end
 
   def update
     if @team.update(team_params)
