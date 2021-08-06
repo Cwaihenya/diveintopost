@@ -4,6 +4,8 @@ class AgendasController < ApplicationController
   def index
     @agendas = Agenda.all
   end
+  def show
+  end
 
   def new
     @team = Team.friendly.find(params[:team_id])
@@ -11,25 +13,25 @@ class AgendasController < ApplicationController
   end
 
   def create
-    @agenda = current_user.agendas.build(title: params[:title])
-    @agenda.team = Team.friendly.find(params[:team_id])
-    current_user.keep_team_id = @agenda.team.id
-    if current_user.save && @agenda.save
-      redirect_to dashboard_url, notice: I18n.t('views.messages.create_agenda')
-    else
-      render :new
-    end
-  end
-  
-  def destroy
-    #if current_user.id==@agenda.user_id
-       @agenda.destroy
-       @agenda.team.assigns.each do |assign|
-         AgendaMailer.agenda_mail(member.user.email,@agenda.title).deliver
-       end
-       #ContactMailer.contact_mail(@agenda).deliver
-       redirect_to dashboard_url, notice: "agenda deleted "
-      end
+   @agenda = current_user.agendas.build(title: params[:title])
+   @agenda.team = Team.friendly.find(params[:team_id])
+   current_user.keep_team_id = @agenda.team.id
+   if current_user.save && @agenda.save
+     redirect_to dashboard_url, notice: I18n.t('views.messages.create_agenda')
+   else
+     render :new
+   end
+ end
+
+ def destroy
+   @team = @agenda.team
+   @users = @team.members
+   if current_user.id == @team.owner_id || current_user.id == @agenda.user_id
+     @agenda.destroy
+     AgendaMailer.agenda_mail(@user.email).deliver
+   end
+   redirect_to dashboard_url
+ end
 
   private
 
